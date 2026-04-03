@@ -3,17 +3,20 @@ import { useFormStatus } from 'react-dom'
 
 interface SubmitButtonProps {
   label: string
+  pendingLabel?: string
+  className?: string
 }
 
-export function SubmitButton({ label }: SubmitButtonProps): ReactElement {
+export function SubmitButton({ label, pendingLabel = 'Loading...', className = 'w-full' }: SubmitButtonProps): ReactElement {
   const { pending } = useFormStatus()
+
   return (
     <button
       type="submit"
       disabled={pending}
-      className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className={`${className} py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
     >
-      {pending ? 'Loading...' : label}
+      {pending ? pendingLabel : label}
     </button>
   )
 }

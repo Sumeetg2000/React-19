@@ -6,9 +6,10 @@ interface BlogListProps {
   blogs: Blog[]
   isLoading: boolean
   error: Error | null
+  searchQuery?: string
 }
 
-export function BlogList({ blogs, isLoading, error }: BlogListProps): ReactElement {
+export function BlogList({ blogs, isLoading, error, searchQuery }: BlogListProps): ReactElement {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -27,9 +28,13 @@ export function BlogList({ blogs, isLoading, error }: BlogListProps): ReactEleme
   }
 
   if (blogs.length === 0) {
+    const isSearchActive = Boolean(searchQuery?.trim())
+
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">No blogs found</p>
+        <p className="text-gray-500 text-lg">
+          {isSearchActive ? `No blogs match "${searchQuery?.trim()}".` : 'No blogs yet. Be the first to publish one.'}
+        </p>
       </div>
     )
   }

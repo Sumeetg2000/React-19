@@ -25,6 +25,9 @@ const toBlog = (item: BlogApiItem): Blog => ({
 export function useBlogs(options: UseBlogsOptions = {}): ReturnType<typeof useQuery<Blog[]>> {
   return useQuery({
     queryKey: ['blogs', options.search],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    networkMode: 'online',
     queryFn: async (): Promise<Blog[]> => {
       const response = await http.get<BlogsResponse>('/blogs', {
         params: options.search ? { search: options.search } : {},

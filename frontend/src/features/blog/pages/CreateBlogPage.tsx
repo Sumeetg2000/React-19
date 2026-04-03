@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react'
 import { useActionState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
+import { SubmitButton } from '@/features/auth/components/SubmitButton'
 import { http } from '@/shared/api/http'
 
 interface CreateBlogActionState {
@@ -89,12 +90,11 @@ export function CreateBlogPage(): ReactElement {
             />
           </div>
 
-          <button
-            type="submit"
-            className="inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Publish blog
-          </button>
+          <SubmitButton
+            label="Publish blog"
+            pendingLabel="Publishing..."
+            className="inline-flex text-sm font-medium"
+          />
         </form>
       </div>
     </main>

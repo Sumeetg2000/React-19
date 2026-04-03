@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
-import { Suspense, useDeferredValue, useTransition, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Suspense, useDeferredValue, useTransition } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { clearAuthToken } from '@/features/auth/utils/authState'
 import { useBlogs } from '@/shared/hooks/useBlogs'
 import { BlogList } from '../components/BlogList'
@@ -8,14 +8,24 @@ import { BlogSearch } from '../components/BlogSearch'
 
 export function HomePage(): ReactElement {
   const navigate = useNavigate()
-  const [search, setSearch] = useState<string>('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('search') ?? ''
   const deferredSearch = useDeferredValue(search)
   const [isPending, startTransition] = useTransition()
   const { data: blogs = [], isLoading, error } = useBlogs({ search: deferredSearch })
 
   const handleSearch = (value: string): void => {
     startTransition(() => {
-      setSearch(value)
+      const nextParams = new URLSearchParams(searchParams)
+      const trimmed = value.trim()
+
+      if (trimmed.length > 0) {
+        nextParams.set('search', value)
+      } else {
+        nextParams.delete('search')
+      }
+
+      setSearchParams(nextParams, { replace: true })
     })
   }
 
@@ -58,7 +68,12 @@ export function HomePage(): ReactElement {
 
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <div className={isPending ? 'opacity-60 pointer-events-none' : ''}>
-            <BlogList blogs={blogs} isLoading={isLoading} error={error instanceof Error ? error : null} />
+            <BlogList
+              blogs={blogs}
+              isLoading={isLoading}
+              error={error instanceof Error ? error : null}
+              searchQuery={deferredSearch}
+            />
           </div>
         </Suspense>
       </div>

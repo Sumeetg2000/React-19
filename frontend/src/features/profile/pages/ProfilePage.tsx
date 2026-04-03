@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { useActionState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { http } from '@/shared/api/http'
 
 interface Profile {
@@ -48,10 +48,20 @@ async function updateProfileAction(
 }
 
 export function ProfilePage(): ReactElement {
-  const [state, action] = useActionState(updateProfileAction, initialState)
+  const queryClient = useQueryClient()
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['profile', state.success],
+  const [state, action] = useActionState(async (prevState: ProfileActionState, formData: FormData) => {
+    const result = await updateProfileAction(prevState, formData)
+
+    if (result.success) {
+      await queryClient.invalidateQueries({ queryKey: ['profile'] })
+    }
+
+    return result
+  }, initialState)
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['profile'],
     queryFn: async (): Promise<Profile> => {
       const response = await http.get<ProfileResponse>('/profile')
       return response.data.data
@@ -66,7 +76,16 @@ export function ProfilePage(): ReactElement {
     return (
       <main className="min-h-screen bg-gray-50 p-6">
         <div className="mx-auto max-w-xl rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
-          {error.message}
+          <p>{error.message}</p>
+          <button
+            type="button"
+            onClick={() => {
+              void refetch()
+            }}
+            className="mt-3 inline-flex rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100"
+          >
+            Retry
+          </button>
         </div>
       </main>
     )
