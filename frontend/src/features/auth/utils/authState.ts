@@ -1,17 +1,29 @@
-const AUTH_STORAGE_KEY = 'blog-studio-is-authenticated'
+const AUTH_STORAGE_KEY = 'blog-studio-auth-token'
 
 export function getIsAuthenticated(): boolean {
-  if (typeof window === 'undefined') {
-    return false
-  }
-
-  return window.localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
+  return Boolean(getAuthToken())
 }
 
-export function setIsAuthenticated(value: boolean): void {
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  return window.localStorage.getItem(AUTH_STORAGE_KEY)
+}
+
+export function setAuthToken(token: string): void {
   if (typeof window === 'undefined') {
     return
   }
 
-  window.localStorage.setItem(AUTH_STORAGE_KEY, value ? 'true' : 'false')
+  window.localStorage.setItem(AUTH_STORAGE_KEY, token)
+}
+
+export function clearAuthToken(): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.removeItem(AUTH_STORAGE_KEY)
 }

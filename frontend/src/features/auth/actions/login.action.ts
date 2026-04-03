@@ -1,6 +1,12 @@
 import type { AuthActionState } from '../types/auth'
 import { http } from '@/shared/api/http'
-import { setIsAuthenticated } from '../utils/authState'
+import { setAuthToken } from '../utils/authState'
+
+interface LoginResponse {
+  data: {
+    token: string
+  }
+}
 
 export async function loginAction(
   _prev: AuthActionState,
@@ -14,8 +20,8 @@ export async function loginAction(
   }
 
   try {
-    await http.post('/auth/login', { email, password })
-    setIsAuthenticated(true)
+    const response = await http.post<LoginResponse>('/auth/login', { email, password })
+    setAuthToken(response.data.data.token)
     return { success: true, error: null }
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : 'Login failed.' }

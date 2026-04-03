@@ -1,6 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import { getAuthToken } from '@/features/auth/utils/authState'
 
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'
+const baseURL = 'http://localhost:3000'
 
 export const http = axios.create({
   baseURL,
@@ -13,6 +14,10 @@ export const http = axios.create({
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const nextConfig = { ...config }
   nextConfig.headers.set('X-App-Client', 'blog-studio')
+  const token = getAuthToken()
+  if (token) {
+    nextConfig.headers.set('Authorization', `Bearer ${token}`)
+  }
   return nextConfig
 })
 

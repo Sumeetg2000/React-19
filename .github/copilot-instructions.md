@@ -66,3 +66,8 @@ Ensure all generated code uses modern React 19 patterns where applicable.
 3. Do not use inline styles anywhere.
 4. Tailwind must be used for styling.
 5. Finish only when all required validations pass.
+
+## Plan Integrity Rule
+
+1. Do not modify files in `/plans` during plan execution.
+2. Treat the selected plan markdown as immutable until implementation and validation are complete.

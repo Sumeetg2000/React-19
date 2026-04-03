@@ -18,6 +18,28 @@ function ProtectedBlogsPage(): ReactElement {
   )
 }
 
+function ProtectedProfilePage(): ReactElement {
+  const ProfilePage = lazy(async () => import('@/features/profile/pages/ProfilePage').then((module) => ({ default: module.ProfilePage })))
+
+  return (
+    <ProtectedRoute isAuthenticated={getIsAuthenticated()}>
+      <ProfilePage />
+    </ProtectedRoute>
+  )
+}
+
+function ProtectedCreateBlogPage(): ReactElement {
+  const CreateBlogPage = lazy(async () =>
+    import('@/features/blog/pages/CreateBlogPage').then((module) => ({ default: module.CreateBlogPage })),
+  )
+
+  return (
+    <ProtectedRoute isAuthenticated={getIsAuthenticated()}>
+      <CreateBlogPage />
+    </ProtectedRoute>
+  )
+}
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -26,6 +48,14 @@ const router = createBrowserRouter([
   {
     path: '/blogs',
     Component: ProtectedBlogsPage,
+  },
+  {
+    path: '/blogs/create',
+    Component: ProtectedCreateBlogPage,
+  },
+  {
+    path: '/profile',
+    Component: ProtectedProfilePage,
   },
   {
     path: '/login',

@@ -7,4 +7,19 @@ export interface Blog {
   createdAt: string
   updatedAt: string
   tags: string[]
+  authorId: string
+}
+
+export interface BlogApiItem {
+  id: string
+  title: string
+  content: string
+  createdAt: string
+  updatedAt: string
+  authorId: string
+  author: {
+    id: string
+    name: string
+    email: string
+  }
 }

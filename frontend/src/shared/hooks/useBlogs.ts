@@ -1,19 +1,35 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Blog } from '@/shared/types/blog'
+import type { Blog, BlogApiItem } from '@/shared/types/blog'
 import { http } from '@/shared/api/http'
 
 export interface UseBlogsOptions {
   search?: string
 }
 
+interface BlogsResponse {
+  data: BlogApiItem[]
+}
+
+const toBlog = (item: BlogApiItem): Blog => ({
+  id: item.id,
+  title: item.title,
+  content: item.content,
+  excerpt: item.content.length > 140 ? `${item.content.slice(0, 140)}...` : item.content,
+  author: item.author.name,
+  createdAt: item.createdAt,
+  updatedAt: item.updatedAt,
+  tags: [],
+  authorId: item.authorId,
+})
+
 export function useBlogs(options: UseBlogsOptions = {}): ReturnType<typeof useQuery<Blog[]>> {
   return useQuery({
     queryKey: ['blogs', options.search],
     queryFn: async (): Promise<Blog[]> => {
-      const { data } = await http.get<Blog[]>('/blogs', {
+      const response = await http.get<BlogsResponse>('/blogs', {
         params: options.search ? { search: options.search } : {},
       })
-      return data
+      return response.data.data.map(toBlog)
     },
   })
 }

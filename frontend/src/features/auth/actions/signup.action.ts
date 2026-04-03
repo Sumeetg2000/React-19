@@ -1,16 +1,23 @@
 import type { AuthActionState } from '../types/auth'
 import { http } from '@/shared/api/http'
-import { setIsAuthenticated } from '../utils/authState'
+import { setAuthToken } from '../utils/authState'
+
+interface SignupResponse {
+  data: {
+    token: string
+  }
+}
 
 export async function signupAction(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const name = formData.get('name') as string
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const confirmPassword = formData.get('confirmPassword') as string
 
-  if (!email || !password || !confirmPassword) {
+  if (!name || !email || !password || !confirmPassword) {
     return { success: false, error: 'All fields are required.' }
   }
 
@@ -19,8 +26,8 @@ export async function signupAction(
   }
 
   try {
-    await http.post('/auth/signup', { email, password })
-    setIsAuthenticated(true)
+    const response = await http.post<SignupResponse>('/auth/signup', { name, email, password })
+    setAuthToken(response.data.data.token)
     return { success: true, error: null }
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : 'Signup failed.' }
