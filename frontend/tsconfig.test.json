@@ -6,5 +6,5 @@
     "verbatimModuleSyntax": false,
     "types": ["jest", "node", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test/setup.ts"]
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.d.ts", "src/test/setup.ts"]
 }

@@ -1,0 +1,14 @@
+@import 'highlight.js/styles/github-dark.css';
+
+.blog-markdown p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.blog-markdown pre {
+  margin: 0;
+}
+
+.blog-markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}

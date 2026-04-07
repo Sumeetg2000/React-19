@@ -54,6 +54,39 @@ blogRouter.get(
   }),
 );
 
+blogRouter.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const idParam = req.params.id;
+    const id = typeof idParam === "string" ? idParam : "";
+
+    if (!id) {
+      throw new HttpError(404, "Blog not found");
+    }
+
+    const blog = await prisma.blog.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!blog) {
+      throw new HttpError(404, "Blog not found");
+    }
+
+    res.status(200).json({ data: blog });
+  }),
+);
+
 blogRouter.post(
   "/",
   requireAuth,

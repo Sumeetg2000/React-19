@@ -48,6 +48,31 @@ exports.blogRouter.get("/", (0, asyncHandler_1.asyncHandler)(async (req, res) =>
     });
     res.status(200).json({ data: blogs });
 }));
+exports.blogRouter.get("/:id", (0, asyncHandler_1.asyncHandler)(async (req, res) => {
+    const idParam = req.params.id;
+    const id = typeof idParam === "string" ? idParam : "";
+    if (!id) {
+        throw new httpError_1.HttpError(404, "Blog not found");
+    }
+    const blog = await prisma_1.prisma.blog.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+            },
+        },
+    });
+    if (!blog) {
+        throw new httpError_1.HttpError(404, "Blog not found");
+    }
+    res.status(200).json({ data: blog });
+}));
 exports.blogRouter.post("/", auth_1.requireAuth, (0, validate_1.validateBody)(createBlogSchema), (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const userId = req.auth?.userId;
     if (!userId) {

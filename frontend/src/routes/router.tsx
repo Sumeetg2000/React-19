@@ -33,6 +33,12 @@ const CreateBlogPage = lazy(() =>
   })),
 );
 
+const BlogDetailPage = lazy(() =>
+  import("@/features/blog/pages/BlogDetailPage").then((module) => ({
+    default: module.BlogDetailPage,
+  })),
+);
+
 function ProtectedBlogsPage(): ReactElement {
   return (
     <ProtectedRoute isAuthenticated={getIsAuthenticated()}>
@@ -57,6 +63,14 @@ function ProtectedCreateBlogPage(): ReactElement {
   );
 }
 
+function ProtectedBlogDetailPage(): ReactElement {
+  return (
+    <ProtectedRoute isAuthenticated={getIsAuthenticated()}>
+      <BlogDetailPage />
+    </ProtectedRoute>
+  );
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -65,6 +79,10 @@ const router = createBrowserRouter([
   {
     path: "/blogs",
     Component: ProtectedBlogsPage,
+  },
+  {
+    path: "/blogs/:id",
+    Component: ProtectedBlogDetailPage,
   },
   {
     path: "/blogs/create",

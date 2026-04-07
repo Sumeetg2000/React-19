@@ -1,6 +1,16 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { getAuthToken } from '@/features/auth/utils/authState'
 
+export class ApiError extends Error {
+  status?: number
+
+  constructor(message: string, status?: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
+
 const baseURL = 'http://localhost:3000'
 
 export const http = axios.create({
@@ -25,6 +35,6 @@ http.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message?: string }>) => {
     const message = error.response?.data?.message ?? error.message
-    return Promise.reject(new Error(message))
+    return Promise.reject(new ApiError(message, error.response?.status))
   },
 )
