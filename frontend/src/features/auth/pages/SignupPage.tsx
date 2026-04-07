@@ -8,6 +8,7 @@ import { getIsAuthenticated } from '../utils/authState'
 const initialState = { success: false, error: null }
 
 export function SignupPage(): ReactElement {
+  // useActionState keeps async signup mutation state colocated with form rendering.
   const [state, action] = useActionState(signupAction, initialState)
 
   if (getIsAuthenticated() || state.success) {
@@ -30,6 +31,7 @@ export function SignupPage(): ReactElement {
           </div>
         )}
 
+        {/* form action keeps submission in React's action pipeline with pending/error support. */}
         <form action={action} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -88,7 +90,7 @@ export function SignupPage(): ReactElement {
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline font-medium">
+          <Link to="/login" viewTransition className="text-blue-600 hover:underline font-medium">
             Sign in
           </Link>
         </p>

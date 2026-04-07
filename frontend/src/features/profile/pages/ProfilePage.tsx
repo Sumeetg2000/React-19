@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { useActionState } from 'react'
+import { useActionState, useTransition } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { http } from '@/shared/api/http'
@@ -49,12 +49,17 @@ async function updateProfileAction(
 
 export function ProfilePage(): ReactElement {
   const queryClient = useQueryClient()
+  // useTransition keeps cache invalidation refresh non-blocking after successful save.
+  const [isInvalidating, startTransition] = useTransition()
 
+  // useActionState keeps async form mutation state in sync with rendered success/error UI.
   const [state, action] = useActionState(async (prevState: ProfileActionState, formData: FormData) => {
     const result = await updateProfileAction(prevState, formData)
 
     if (result.success) {
-      await queryClient.invalidateQueries({ queryKey: ['profile'] })
+      startTransition(() => {
+        void queryClient.invalidateQueries({ queryKey: ['profile'] })
+      })
     }
 
     return result
@@ -100,10 +105,16 @@ export function ProfilePage(): ReactElement {
       <div className="mx-auto max-w-xl rounded-xl bg-white p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Your Profile</h1>
-          <Link to="/blogs" className="text-sm font-medium text-blue-600 hover:underline">
+          <Link to="/blogs" viewTransition className="text-sm font-medium text-blue-600 hover:underline">
             Back to Blogs
           </Link>
         </div>
+
+        {isInvalidating && (
+          <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
+            Syncing profile changes...
+          </div>
+        )}
 
         <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
           <p>
@@ -126,6 +137,7 @@ export function ProfilePage(): ReactElement {
           </div>
         )}
 
+        {/* form action connects browser submit to React Action ordering and pending state. */}
         <form action={action} className="space-y-4">
           <div>
             <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">

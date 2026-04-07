@@ -41,6 +41,7 @@ async function createBlogAction(
 }
 
 export function CreateBlogPage(): ReactElement {
+  // useActionState handles create mutation result state and retries across submissions.
   const [state, action] = useActionState(createBlogAction, initialState)
 
   if (state.success) {
@@ -52,7 +53,7 @@ export function CreateBlogPage(): ReactElement {
       <div className="mx-auto max-w-2xl rounded-xl bg-white p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Create Blog</h1>
-          <Link to="/blogs" className="text-sm font-medium text-blue-600 hover:underline">
+          <Link to="/blogs" viewTransition className="text-sm font-medium text-blue-600 hover:underline">
             Back to Blogs
           </Link>
         </div>
@@ -63,6 +64,7 @@ export function CreateBlogPage(): ReactElement {
           </div>
         )}
 
+        {/* form action keeps mutation ordering and pending state aligned with React Actions. */}
         <form action={action} className="space-y-4">
           <div>
             <label htmlFor="title" className="mb-1 block text-sm font-medium text-gray-700">

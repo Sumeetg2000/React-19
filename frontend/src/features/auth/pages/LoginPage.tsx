@@ -8,6 +8,7 @@ import { getIsAuthenticated } from '../utils/authState'
 const initialState = { success: false, error: null }
 
 export function LoginPage(): ReactElement {
+  // useActionState manages async mutation result state in the form lifecycle.
   const [state, action] = useActionState(loginAction, initialState)
 
   if (getIsAuthenticated() || state.success) {
@@ -30,6 +31,7 @@ export function LoginPage(): ReactElement {
           </div>
         )}
 
+        {/* form action wires submission into React Action handling automatically. */}
         <form action={action} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -62,7 +64,7 @@ export function LoginPage(): ReactElement {
 
         <p className="mt-4 text-center text-sm text-gray-600">
           {"Don't have an account? "}
-          <Link to="/signup" className="text-blue-600 hover:underline font-medium">
+          <Link to="/signup" viewTransition className="text-blue-600 hover:underline font-medium">
             Sign up
           </Link>
         </p>

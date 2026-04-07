@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { Suspense, useDeferredValue, useTransition } from 'react'
+import { Suspense, useDeferredValue, useEffect, useEffectEvent, useTransition } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { clearAuthToken } from '@/features/auth/utils/authState'
 import { useBlogs } from '@/shared/hooks/useBlogs'
@@ -10,11 +10,29 @@ export function HomePage(): ReactElement {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const search = searchParams.get('search') ?? ''
+  // useDeferredValue keeps heavy list updates behind input updates for responsive typing.
   const deferredSearch = useDeferredValue(search)
+  // useTransition marks URL/search updates as non-blocking background work.
   const [isPending, startTransition] = useTransition()
   const { data: blogs = [], isLoading, error } = useBlogs({ search: deferredSearch })
 
+  // useEffectEvent keeps the storage listener callback fresh without re-subscribing the effect.
+  const onAuthStorageChange = useEffectEvent((event: StorageEvent): void => {
+    if (event.key === 'blog-studio-auth-token' && !event.newValue) {
+      navigate('/login', { replace: true, viewTransition: true })
+    }
+  })
+
+  useEffect(() => {
+    window.addEventListener('storage', onAuthStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', onAuthStorageChange)
+    }
+  }, [])
+
   const handleSearch = (value: string): void => {
+    // startTransition prevents search param updates from blocking urgent interactions.
     startTransition(() => {
       const nextParams = new URLSearchParams(searchParams)
       const trimmed = value.trim()
@@ -31,7 +49,7 @@ export function HomePage(): ReactElement {
 
   const handleLogout = (): void => {
     clearAuthToken()
-    navigate('/login', { replace: true })
+    navigate('/login', { replace: true, viewTransition: true })
   }
 
   return (
@@ -46,11 +64,16 @@ export function HomePage(): ReactElement {
             <div className="flex items-center gap-2">
               <Link
                 to="/blogs/create"
+                viewTransition
                 className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
                 Create Blog
               </Link>
-              <Link to="/profile" className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700">
+              <Link
+                to="/profile"
+                viewTransition
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700"
+              >
                 Profile
               </Link>
               <button
@@ -66,6 +89,7 @@ export function HomePage(): ReactElement {
 
         <BlogSearch value={search} onChange={handleSearch} />
 
+        {/* Suspense keeps revealed shell visible while lazy/data boundaries resolve. */}
         <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
           <div className={isPending ? 'opacity-60 pointer-events-none' : ''}>
             <BlogList

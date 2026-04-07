@@ -8,6 +8,7 @@ interface SubmitButtonProps {
 }
 
 export function SubmitButton({ label, pendingLabel = 'Loading...', className = 'w-full' }: SubmitButtonProps): ReactElement {
+  // useFormStatus reads pending form action state without introducing local loading state.
   const { pending } = useFormStatus()
 
   return (
