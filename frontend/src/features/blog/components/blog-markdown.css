@@ -12,3 +12,107 @@
 .blog-markdown code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
+
+.blog-markdown ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.blog-markdown ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.blog-markdown li {
+  margin: 0.5rem 0;
+}
+
+.prose ol > li::marker {
+  font-weight: 600;
+}
+
+.prose ul > li::marker {
+  color: #64748b;
+}
+
+/* Headings */
+.blog-markdown h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+}
+
+.blog-markdown h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.blog-markdown h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
+/* Paragraph */
+.blog-markdown p {
+  margin: 0.75rem 0;
+  line-height: 1.7;
+}
+
+/* Bold */
+.blog-markdown strong {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Italic */
+.blog-markdown em {
+  font-style: italic;
+  color: #475569;
+}
+
+/* Inline code */
+.blog-markdown code {
+  /* background: #f1f5f9; */
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Blockquote */
+.blog-markdown blockquote {
+  border-left: 4px solid #6366f1;
+  padding-left: 12px;
+  color: #475569;
+  margin: 1rem 0;
+  font-style: italic;
+}
+
+/* Lists */
+.blog-markdown ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.blog-markdown ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.blog-markdown li {
+  margin: 0.4rem 0;
+}
+
+/* Links */
+.blog-markdown a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* Horizontal rule */
+.blog-markdown hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.5rem 0;
+}
